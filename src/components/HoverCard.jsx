@@ -38,12 +38,23 @@ function HoverCard({ movie, anchorRef, onClose, onSelect, onPlay, isInList, onTo
     if (!anchorRef?.current) return;
     const rect = anchorRef.current.getBoundingClientRect();
     const cardW = 340;
+    // Align card center with poster center for a "Locked-In" expansion
     let left = rect.left + rect.width / 2 - cardW / 2;
     left = Math.max(10, Math.min(left, window.innerWidth - cardW - 10));
-    // Use fixed positioning relative to viewport to avoid scroll/container bugs
-    const top = rect.top - 40; 
+    
+    // Position card exactly over the poster
+    const top = rect.top + rect.height / 2 - (cardW * 9/16) / 2; 
     setPos({ top, left });
   }, [anchorRef]);
+
+  // Handle "Scroll-Lock" to keep the trailer perfectly fixed under the mouse
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = originalOverflow || "unset";
+    };
+  }, []);
 
   const title = movie.title || movie.name || '';
   const year = (movie.release_date || movie.first_air_date || '').substring(0, 4);

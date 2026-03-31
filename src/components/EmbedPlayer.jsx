@@ -47,21 +47,16 @@ function EmbedPlayer({ tmdbId, mediaType, title, season = 1, episode = 1, onClos
         const msg = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
         if (msg?.type === 'PLAYER_EVENT') {
           const { event: evtName, currentTime, duration } = msg.data || {};
-          // Auto-advance to next episode when current one ends
           if (evtName === 'ended' && mediaType === 'tv' && onNext) {
             onNext();
           }
-          // Persist progress to localStorage for resume-later
           if (currentTime && duration) {
             const key = `vk_progress_${mediaType}_${tmdbId}_${season}_${episode}`;
             localStorage.setItem(key, JSON.stringify({ currentTime, duration, ts: Date.now() }));
           }
         }
-      } catch (_) {
-        // Non-JSON messages can be safely ignored
-      }
+      } catch (_) {}
     };
-
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, [tmdbId, mediaType, season, episode, onNext]);
@@ -86,14 +81,19 @@ function EmbedPlayer({ tmdbId, mediaType, title, season = 1, episode = 1, onClos
       className="netflix-player"
       style={{ background: '#000', cursor: showControls ? 'default' : 'none' }}
     >
-      {/* ── Loading spinner – shown until iframe fires onLoad ── */}
+      {/* ── Floating Navigation (Netflix Style) ── */}
+      <div className={`nf-player-back-wrap ${showControls ? "visible" : ""}`}>
+        <button className="nf-player-back" onClick={onClose} title="Back to browsing">
+          <svg viewBox="0 0 24 24" fill="white">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+          </svg>
+        </button>
+      </div>
+
+      {/* ── Cinematic Loader (Netflix Style) ── */}
       {isLoading && (
         <div className="nf-player-loader">
-          <div className="nf-spinner" />
-          <div className="nf-loader-text">
-            <p>Loading VidKing Player…</p>
-            <span>Establishing secure connection</span>
-          </div>
+          <div className="nf-netflix-pulse" />
         </div>
       )}
 
@@ -109,15 +109,6 @@ function EmbedPlayer({ tmdbId, mediaType, title, season = 1, episode = 1, onClos
         referrerPolicy="no-referrer"
         sandbox="allow-scripts allow-same-origin allow-forms allow-presentation"
       />
-
-      {/* ── Top control bar (back button) ── */}
-      <div className={`nf-player-overlay top ${showControls ? 'visible' : ''}`}>
-        <button className="nf-player-back" onClick={onClose} title="Back to browsing">
-          <svg viewBox="0 0 24 24" fill="white">
-            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
-          </svg>
-        </button>
-      </div>
     </div>
   );
 }

@@ -177,16 +177,15 @@ body {
 .banner {
   color: white;
   object-fit: contain;
-  height: 85vh;
+  height: 100vh;
   position: relative;
   background-size: cover;
   background-position: center center;
 }
 .banner__contents {
   position: absolute;
-  top: 50%;
+  bottom: 25%;
   left: 40px;
-  transform: translateY(-50%);
   max-width: 600px;
   z-index: 10;
 }
@@ -260,22 +259,28 @@ body {
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 12rem;
-  background-image: linear-gradient(180deg, transparent, rgba(37, 37, 37, 0.61), var(--net-black));
+  height: 30rem;
+  background-image: linear-gradient(180deg, transparent, rgba(20, 20, 20, 0.4), var(--net-black));
   z-index: 5;
 }
 
 /* Row */
 .row {
-  padding: 0 4%;
-  margin-bottom: 3.5rem;
+  padding: 0 2%;
+  margin-bottom: 1.5rem;
   position: relative;
+}
+
+/* Premium Hero Overlap */
+.row-hero-overlap {
+  margin-top: -100px !important;
+  z-index: 10;
 }
 .row__title {
   font-family: 'Netflix Sans', sans-serif;
   font-size: 1.4rem;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
   color: #e5e5e5;
   letter-spacing: 0.02em;
   cursor: pointer;
@@ -298,7 +303,7 @@ body {
   display: flex;
   overflow-y: hidden;
   overflow-x: scroll;
-  padding: 12px 0;
+  padding: 4px 0;
   gap: 6px;
   scrollbar-width: none;
 }
@@ -341,7 +346,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.95);
+  background-color: black;
   z-index: 9999;
   display: flex;
   justify-content: center;
@@ -362,11 +367,11 @@ body {
 }
 .video-player-close:hover { color: var(--net-red); }
 .video-iframe {
-  width: 85%;
-  height: 85%;
+  width: 100%;
+  height: 100%;
   border: none;
-  border-radius: 8px;
-  box-shadow: 0 0 30px rgba(0,0,0,0.8);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 /* Telegram Specific Styles */
@@ -858,13 +863,7 @@ body {
   position: absolute; z-index: 10;
   display: flex; align-items: center; justify-content: center;
 }
-.nf-spinner {
-  width: 56px; height: 56px;
-  border: 4px solid rgba(255,255,255,0.25);
-  border-top-color: var(--net-red);
-  border-radius: 50%;
-  animation: nf-spin 0.75s linear infinite;
-}
+.nf-spinner { display: none; }
 @keyframes nf-spin { to { transform: rotate(360deg); } }
 
 /* Skip animation */
@@ -916,7 +915,7 @@ body {
 /* Bottom */
 .nf-bottom-bar { padding: 0 32px 24px; }
 .nf-progress-wrap {
-  padding: 12px 0; cursor: pointer;
+  padding: 4px 0; cursor: pointer;
   user-select: none;
 }
 .nf-progress-track {
@@ -1036,13 +1035,18 @@ body {
 }
 .hover-card-thumb { width: 100%; height: 100%; object-fit: cover; }
 .hover-card-trailer {
-  width: 100%; height: 100%; border: none;
-  pointer-events: none; /* Let clicks pass through to the media div */
+  width: 130%;
+  height: 130%;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(1.3);
+  border: none;
+  pointer-events: none;
 }
 
 .hover-card-body { padding: 16px; }
 .hover-card-actions {
-  display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
 }
 .hc-btn {
   background: white; border: none; border-radius: 4px;
@@ -1070,7 +1074,7 @@ body {
   padding: 0 4px; font-size: 0.65rem;
 }
 .hover-card-title {
-  font-size: 0.95rem; font-weight: 700; color: white; margin-bottom: 12px;
+  font-size: 0.95rem; font-weight: 700; color: white; margin-bottom: 4px;
 }
 .hover-card-genres {
   font-size: 0.75rem; color: #aaa; display: flex; gap: 6px; align-items: center;
@@ -1084,8 +1088,12 @@ body {
 }
 .banner-trailer-wrap { position: absolute; inset: 0; background: #000; }
 .banner-trailer-frame {
-  width: 100%; height: 100%; border: none; opacity: 0;
-  animation: fade-in 1s forwards 0.5s;
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 115vw; height: 115vh;
+  transform: translate(-50%, -50%) scale(1.15);
+  pointer-events: none;
+  filter: brightness(0.85);
 }
 @keyframes fade-in { to { opacity: 1; } }
 
@@ -1196,7 +1204,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
 }
 .rec-match {
   color: #46d369;
@@ -1302,7 +1310,7 @@ body {
 }
 
 .nf-player-overlay {
-  position: absolute; left: 0; right: 0; z-index: 100;
+  position: absolute; left: 0; right: 0; top: 0; bottom: 0; z-index: 100;
   padding: 40px; display: flex; align-items: center;
   transition: opacity 0.1s ease-in-out;
   visibility: hidden; opacity: 0;
@@ -1319,8 +1327,13 @@ body {
 }
 
 .nf-player-back {
+  position: absolute !important;
+  top: 30px !important;
+  left: 30px !important;
+  z-index: 500 !important;
   background: none; border: none; cursor: pointer; padding: 10px;
-  display: flex; align-items: center; transition: transform 0.2s;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s;
 }
 .nf-player-back:hover { transform: scale(1.1); }
 .nf-player-back svg { width: 44px; height: 44px; }
@@ -1375,20 +1388,9 @@ body {
   z-index: 50;
 }
 
-.nf-spinner {
-  width: 64px;
-  height: 64px;
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-top: 4px solid var(--net-red);
-  border-radius: 50%;
-  animation: nf-spin 0.8s linear infinite;
-  box-shadow: 0 0 15px rgba(229, 9, 20, 0.3);
-}
+.nf-spinner { display: none; }
 
-.nf-loader-text {
-  text-align: center;
-  animation: fadeIn 0.5s ease-out;
-}
+.nf-loader-text { display: none; }
 
 .nf-loader-text p {
   font-size: 1.5rem;
@@ -1429,7 +1431,7 @@ body {
 .nf-server-sidebar h3 {
   font-size: 1.8rem;
   font-weight: 800;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
   color: #fff;
   letter-spacing: -0.03em;
 }
@@ -1707,7 +1709,15 @@ body {
   position: relative;
 }
 .hover-card-thumb { width:100%; height:100%; object-fit:cover; }
-.hover-card-trailer { width:100%; height:100%; border:none; pointer-events: none; }
+.hover-card-trailer {
+  width: 130%;
+  height: 130%;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(1.3);
+  border: none;
+  pointer-events: none;
+}
 
 .hover-card-body {
   padding: 16px;
@@ -1741,7 +1751,7 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
 }
 .hc-match { color: #46d369; font-weight: 700; font-size: 0.9rem; }
 .hc-year { font-weight: 400; color: white; font-size: 0.9rem; }
@@ -2080,11 +2090,12 @@ body {
   pointer-events: none; /* Kill all YouTube interactions/controls */
 }
 .banner-trailer-frame {
-  width: 116%; /* Overscan to hide UI */
-  height: 116%;
-  margin-left: -8%;
-  margin-top: -4%;
-  border: none;
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 115vw; height: 115vh;
+  transform: translate(-50%, -50%) scale(1.15);
+  pointer-events: none;
+  filter: brightness(0.85);
 }
 .banner-mute-btn {
   position: absolute;
@@ -2107,7 +2118,7 @@ body {
 
 /* --- HoverCard Perfection --- */
 .hover-card {
-  position: absolute;
+  position: fixed !important;
   width: 340px;
   background: #181818;
   border-radius: 6px;
@@ -2115,7 +2126,7 @@ body {
   z-index: 1000;
   overflow: hidden;
   animation: hcEntrance 0.3s var(--ease-out);
-  transform-origin: center top;
+  transform-origin: center center;
 }
 @keyframes hcEntrance {
   from { opacity: 0; transform: scale(0.8) translateY(10px); }
@@ -2136,10 +2147,11 @@ body {
   object-fit: cover;
 }
 .hover-card-trailer {
-  width: 115%; /* Overscan to hide YouTube UI */
-  height: 115%;
-  margin-left: -7.5%;
-  margin-top: -7.5%;
+  width: 130%;
+  height: 130%;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(1.3);
   border: none;
   pointer-events: none;
 }
@@ -2149,7 +2161,7 @@ body {
 }
 .hover-card-actions {
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
 }
 .hc-actions-left { display: flex; gap: 8px; }
 .hc-btn {
@@ -2164,7 +2176,7 @@ body {
 .hc-play:hover { background: rgba(255,255,255,0.8) !important; }
 
 .hover-card-meta {
-  display: flex; align-items: center; gap: 10px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px; margin-bottom: 4px;
 }
 .hc-match { color: #46d369; font-weight: 700; font-size: 0.95rem; }
 .hc-year { color: #fff; font-size: 0.95rem; }
@@ -2281,4 +2293,67 @@ body {
 /* Fix for the oversized logo and layout on login page */
 .login-nav { position: absolute; top: 0; left: 0; width: 100%; padding: 25px 4%; z-index: 10; }
 .login-logo { width: 167px; height: 45px; object-fit: contain; }
+
+
+
+
+
+/* Banner Media Full-Bleed Engine */
+.banner-media-container {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 1; overflow: hidden;
+}
+.banner-trailer-wrap {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  overflow: hidden;
+}
+.banner-trailer-frame {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 115vw; height: 115vh;
+  transform: translate(-50%, -50%) scale(1.15);
+  pointer-events: none;
+  filter: brightness(0.85);
+}
+
+
+
+
+
+
+
+/* Netflix Pulse Engine */
+@keyframes nf-pulse {
+  0% { transform: scale(0.95); opacity: 0.5; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.5; }
+}
+.nf-netflix-pulse {
+  width: 120px; height: 120px;
+  background: var(--net-red);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  animation: nf-pulse 1.5s infinite ease-in-out;
+  box-shadow: 0 0 40px rgba(229, 9, 20, 0.4);
+  position: relative;
+}
+.nf-netflix-pulse::after {
+  content: 'N';
+  color: white;
+  font-size: 3rem;
+  font-weight: 900;
+  font-family: var(--font-main);
+}
+
+/* Embed Player Bottom Overlay (Minimalist) */
+.nf-player-overlay.bottom.embed {
+  justify-content: flex-end;
+  padding: 20px 40px;
+  pointer-events: none;
+}
+.nf-player-overlay.bottom.embed .nf-player-controls-right {
+  pointer-events: auto;
+}
 

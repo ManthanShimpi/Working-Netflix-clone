@@ -14,6 +14,7 @@ function Row({
   lang, 
   isInList, 
   onToggleList,
+  className = "",
   showProgress = false, onRemoveContinue }) {
   const [movies, setMovies] = useState(initialMovies || []);
   const [hoveredMovie, setHoveredMovie] = useState(null);
@@ -51,7 +52,7 @@ function Row({
   };
 
   return (
-    <div className="row">
+    <div className={`row ${className}`}>
       <h2 className="row__title">
         {title}
         <span className="row__title-arrow">Explore All &rsaquo;</span>

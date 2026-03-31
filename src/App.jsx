@@ -238,8 +238,47 @@ function App() {
     return (
       <>
         <Banner onMovieSelect={handleMovieSelect} onPlay={handlePlayMovie} lang={selectedLang} />
-        
-        {continueWatching.length > 0 && (
+
+        {/* Home Row Sequence - Priority Overlap */}
+
+        {watchlist.length > 0 ? (
+          <Row 
+            title="Your Next Watch" 
+            movies={watchlist} 
+            className="row-hero-overlap"
+            onMovieSelect={handleMovieSelect} 
+            onPlay={handlePlayMovie} 
+            lang={selectedLang} 
+            isInList={isInList} 
+            onToggleList={toggleList} 
+          />
+        ) : continueWatching.length > 0 ? (
+          <Row 
+            title="Continue Watching for You" 
+            movies={continueWatching} 
+            className="row-hero-overlap"
+            onMovieSelect={handleMovieSelect} 
+            onPlay={handlePlayMovie} 
+            lang={selectedLang} 
+            showProgress
+            onRemoveContinue={handleRemoveContinue}
+          />
+        ) : (
+          <Row 
+            title="NETFLIX ORIGINALS" 
+            fetchUrl={rowUrls.originals} 
+            isLargeRow 
+            className="row-hero-overlap"
+            onMovieSelect={handleMovieSelect} 
+            onPlay={handlePlayMovie} 
+            lang={selectedLang} 
+            isInList={isInList} 
+            onToggleList={toggleList} 
+          />
+        )}
+
+        {/* Subsequent Rows (Standard Spacing) */}
+        {watchlist.length > 0 && continueWatching.length > 0 && (
           <Row 
             title="Continue Watching for You" 
             movies={continueWatching} 
@@ -250,19 +289,11 @@ function App() {
             onRemoveContinue={handleRemoveContinue}
           />
         )}
-
-        {watchlist.length > 0 && (
-          <Row 
-            title="My List" 
-            movies={watchlist} 
-            onMovieSelect={handleMovieSelect} 
-            onPlay={handlePlayMovie} 
-            lang={selectedLang} 
-            isInList={isInList} 
-            onToggleList={toggleList} 
-          />
+        
+        {/* We skip Originals if it was used as the overlap row above */}
+        {(watchlist.length > 0 || continueWatching.length > 0) && (
+          <Row title="NETFLIX ORIGINALS"  fetchUrl={rowUrls.originals} isLargeRow onMovieSelect={handleMovieSelect} onPlay={handlePlayMovie} lang={selectedLang} isInList={isInList} onToggleList={toggleList} />
         )}
-        <Row title="NETFLIX ORIGINALS"  fetchUrl={rowUrls.originals} isLargeRow onMovieSelect={handleMovieSelect} onPlay={handlePlayMovie} lang={selectedLang} isInList={isInList} onToggleList={toggleList} />
         <Row title="Trending Now"        fetchUrl={rowUrls.trending}  onMovieSelect={handleMovieSelect} onPlay={handlePlayMovie} lang={selectedLang} isInList={isInList} onToggleList={toggleList} />
         <Row title="Top Rated"           fetchUrl={rowUrls.topRated}  onMovieSelect={handleMovieSelect} onPlay={handlePlayMovie} lang={selectedLang} isInList={isInList} onToggleList={toggleList} />
         <Row title="Action &amp; Adventure" fetchUrl={rowUrls.action} onMovieSelect={handleMovieSelect} onPlay={handlePlayMovie} lang={selectedLang} isInList={isInList} onToggleList={toggleList} />

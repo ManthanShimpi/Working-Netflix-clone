@@ -9,7 +9,11 @@ function NativePlayer({ src, title, onClose, onNext, mediaType, season, episode 
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [showControls, setShowControls] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   let hideTimer = null;
+
+  const playerRef = useRef(null);
+  const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -25,17 +29,39 @@ function NativePlayer({ src, title, onClose, onNext, mediaType, season, episode 
       hls.loadSource(src);
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        setIsLoading(false);
         video.play().catch(err => console.error("Auto-play blocked:", err));
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = src;
-      video.oncanplay = () => video.play();
+      video.oncanplay = () => {
+        setIsLoading(false);
+        video.play();
+      };
     }
 
     return () => {
       if (hls) hls.destroy();
     };
   }, [src]);
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, []);
+
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      playerRef.current.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   const togglePlay = () => {
     if (videoRef.current.paused) {
@@ -59,7 +85,7 @@ function NativePlayer({ src, title, onClose, onNext, mediaType, season, episode 
   };
 
   const skip = (seconds) => {
-    videoRef.current.currentTime += seconds;
+    if (videoRef.current) videoRef.current.currentTime += seconds;
   };
 
   const handleMouseMove = () => {
@@ -76,7 +102,12 @@ function NativePlayer({ src, title, onClose, onNext, mediaType, season, episode 
   };
 
   return (
-    <div className="nf-native-player" onMouseMove={handleMouseMove} style={{ cursor: showControls ? 'default' : 'none' }}>
+    <div 
+      ref={playerRef}
+      className="nf-native-player" 
+      onMouseMove={handleMouseMove} 
+      style={{ cursor: showControls ? 'default' : 'none' }}
+    >
       <video
         ref={videoRef}
         className="nf-video-core"
@@ -85,11 +116,24 @@ function NativePlayer({ src, title, onClose, onNext, mediaType, season, episode 
         autoPlay
       />
 
-      {/* Top Banner */}
-      <div className={`nf-player-overlay top ${showControls ? 'visible' : ''}`}>
-        <button className="nf-player-back" onClick={onClose}>
-          <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" fill="white" /></svg>
+      {/* --- Cinematic Loader (Netflix Style) --- */}
+      {isLoading && (
+        <div className="nf-player-loader">
+          <div className="nf-netflix-pulse" />
+        </div>
+      )}
+
+      {/* --- Floating Navigation (Netflix Style) --- */}
+      <div className={`nf-player-back-wrap ${showControls ? "visible" : ""}`}>
+        <button className="nf-player-back" onClick={onClose} title="Back to browsing">
+          <svg viewBox="0 0 24 24" fill="white">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+          </svg>
         </button>
+      </div>
+
+      {/* Top Banner (Info only) */}
+      <div className={`nf-player-overlay top ${showControls ? 'visible' : ''}`}>
         <div className="nf-player-info">
           <span className="nf-player-title">{title}</span>
           {mediaType === 'tv' && (
@@ -154,11 +198,12 @@ function NativePlayer({ src, title, onClose, onNext, mediaType, season, episode 
                 <span>Next Episode</span>
               </button>
             )}
-            <button className="nf-control-btn" onClick={() => {
-              if (document.fullscreenElement) document.exitFullscreen();
-              else document.documentElement.requestFullscreen();
-            }}>
-              <svg viewBox="0 0 24 24" fill="white"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+            <button className="nf-control-btn" onClick={toggleFullScreen}>
+              {isFullScreen ? (
+                <svg viewBox="0 0 24 24" fill="white"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="white"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+              )}
             </button>
           </div>
         </div>
